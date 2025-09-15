@@ -169,16 +169,7 @@ Las migraciones incluyen:
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Crear Pull Request
 
-## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT.
 
-## 👨‍💻 Autor
 
-**Matías Castillo Cáceres**
-- Email: matias.castillo.caceres@ciisa.cl
-- GitHub: [@MatiasCastilloCaceres](https://github.com/MatiasCastilloCaceres)
 
----
-
-⭐ Si te gusta este proyecto, ¡dale una estrella en GitHub!
