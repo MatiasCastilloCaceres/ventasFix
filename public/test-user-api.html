@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test User API</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Test User API</h1>
+    
+    <h2>Crear Usuario</h2>
+    <form id="testForm">
+        <div>
+            <label>RUT: <input type="text" id="rut" value="12345678-9"></label>
+        </div>
+        <div>
+            <label>Nombre: <input type="text" id="nombre" value="Juan"></label>
+        </div>
+        <div>
+            <label>Apellido: <input type="text" id="apellido" value="Pérez"></label>
+        </div>
+        <div>
+            <label>Email: <input type="email" id="email" value="juan@test.com"></label>
+        </div>
+        <div>
+            <label>Password: <input type="password" id="password" value="password123"></label>
+        </div>
+        <div>
+            <label>Confirm Password: <input type="password" id="password_confirmation" value="password123"></label>
+        </div>
+        <button type="submit">Crear Usuario</button>
+    </form>
+
+    <h2>Resultado</h2>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = {
+                rut: document.getElementById('rut').value,
+                nombre: document.getElementById('nombre').value,
+                apellido: document.getElementById('apellido').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                password_confirmation: document.getElementById('password_confirmation').value
+            };
+
+            console.log('Sending data:', data);
+
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.text().then(text => {
+                    console.log('Response text:', text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        return { error: 'Invalid JSON', response: text };
+                    }
+                });
+            })
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            });
+        });
+    </script>
+</body>
+</html>

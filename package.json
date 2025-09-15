@@ -1,0 +1,11 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "echo 'VentasFix usa template Vuexy Bootstrap - No requiere compilación'",
+        "build": "echo 'VentasFix usa template Vuexy Bootstrap - No requiere compilación'"
+    },
+    "devDependencies": {
+        "axios": "^1.7.4"
+    }
+}
