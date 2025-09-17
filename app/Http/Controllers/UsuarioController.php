@@ -18,11 +18,11 @@ class UsuarioController extends Controller
     {
         try {
             $usuarios = $this->usuarioService->listarUsuarios($request->all());
-            
+
             // Si es una petición AJAX (para DataTables), devolver JSON
             if ($request->ajax()) {
                 return response()->json([
-                    'data' => $usuarios->map(function($usuario) {
+                    'data' => $usuarios->map(function ($usuario) {
                         return [
                             'id' => $usuario->id,
                             'name' => $usuario->name,
@@ -43,7 +43,7 @@ class UsuarioController extends Controller
                     })
                 ]);
             }
-            
+
             return view('usuarios.index', compact('usuarios'));
         } catch (\Exception $e) {
             return back()->with('error', 'Error al cargar usuarios: ' . $e->getMessage());
@@ -58,7 +58,9 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'rut' => 'required|string|unique:users,rut',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);

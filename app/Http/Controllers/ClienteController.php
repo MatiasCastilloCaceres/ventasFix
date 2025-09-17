@@ -62,49 +62,81 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        // Mapear nombres de campos de diferentes formularios
-        $datos = [
-            'rut_empresa' => $request->rut_empresa ?? $request->rut ?? null,
-            'rubro' => $request->rubro ?? $request->giro ?? null,
-            'razon_social' => $request->razon_social ?? null,
-            'telefono' => $request->telefono ?? null,
-            'direccion' => $request->direccion ?? null,
-            'nombre_contacto' => $request->nombre_contacto ?? $request->contacto ?? null,
-            'email_contacto' => $request->email_contacto ?? $request->email ?? null,
-        ];
+        $request->validate([
+            'rut_empresa' => 'required|string|max:12|unique:clientes,rut_empresa',
+            'razon_social' => 'required|string|max:255',
+            'rubro' => 'nullable|string|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'nombre_contacto' => 'nullable|string|max:255',
+            'email_contacto' => 'nullable|email|max:255',
+        ]);
 
         try {
-            // Validación básica
-            if (empty($datos['rut_empresa'])) {
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'RUT Empresa es requerido');
-            }
-
-            if (empty($datos['razon_social'])) {
-                return redirect()->back()
-                    ->withInput()
-                    ->with('error', 'Razón Social es requerida');
-            }
-
-            // Crear cliente directamente
-            $cliente = new Cliente();
-            $cliente->rut_empresa = $datos['rut_empresa'];
-            $cliente->rubro = $datos['rubro'] ?? 'Sin especificar';
-            $cliente->razon_social = $datos['razon_social'];
-            $cliente->telefono = $datos['telefono'] ?? '';
-            $cliente->direccion = $datos['direccion'] ?? '';
-            $cliente->nombre_contacto = $datos['nombre_contacto'] ?? 'Sin especificar';
-            $cliente->email_contacto = $datos['email_contacto'] ?? '';
-            $cliente->save();
+            $cliente = Cliente::create($request->all());
 
             return redirect()->route('clientes.index')
-                ->with('success', 'Cliente creado exitosamente con ID: ' . $cliente->id);
+                ->with('success', 'Cliente creado exitosamente.');
 
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error al crear cliente: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Método especial para crear clientes desde formularios externos usando GET
+     */
+    public function storeFromGet(Request $request)
+    {
+        try {
+            // Mapear parámetros GET a los campos correctos
+            $datos = [
+                'rut_empresa' => $request->rut ?? $request->rut_empresa ?? null,
+                'razon_social' => $request->razon_social ?? null,
+                'rubro' => $request->giro ?? $request->rubro ?? null,
+                'telefono' => $request->telefono ?? null,
+                'direccion' => $request->direccion ?? null,
+                'nombre_contacto' => $request->contacto ?? $request->nombre_contacto ?? null,
+                'email_contacto' => $request->email ?? $request->email_contacto ?? null,
+            ];
+
+            // Validación básica
+            if (empty($datos['rut_empresa'])) {
+                return response()->json(['error' => 'RUT empresa es requerido'], 400);
+            }
+
+            if (empty($datos['razon_social'])) {
+                return response()->json(['error' => 'Razón social es requerida'], 400);
+            }
+
+            // Crear cliente
+            $clienteData = [
+                'rut_empresa' => $datos['rut_empresa'],
+                'razon_social' => $datos['razon_social'],
+                'rubro' => $datos['rubro'] ?? 'Sin especificar',
+                'telefono' => $datos['telefono'] ?? '',
+                'direccion' => $datos['direccion'] ?? '',
+                'nombre_contacto' => $datos['nombre_contacto'] ?? '',
+                'email_contacto' => $datos['email_contacto'] ?? '',
+            ];
+
+            $cliente = Cliente::create($clienteData);
+
+            // Responder con JSON para formularios externos
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente creado exitosamente',
+                'id' => $cliente->id,
+                'cliente' => $cliente
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al crear cliente: ' . $e->getMessage()
+            ], 500);
         }
     }
 

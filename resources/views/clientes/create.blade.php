@@ -24,8 +24,9 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('clientes.store') }}" method="POST">
-                        @csrf
+                    <form action="{{ route('test.cliente.store') }}" method="POST" id="clienteForm">
+                        <!-- Comentamos CSRF temporalmente para debug -->
+                        {{-- @csrf --}}
                         
                         <div class="row">
                             <div class="col-md-6">
@@ -132,3 +133,32 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('clienteForm');
+    
+    form.addEventListener('submit', function(e) {
+        console.log('Formulario enviado');
+        
+        // Verificar que todos los campos obligatorios estén llenos
+        const rutEmpresa = document.getElementById('rut_empresa').value;
+        const razonSocial = document.getElementById('razon_social').value;
+        const rubro = document.getElementById('rubro').value;
+        
+        if (!rutEmpresa || !razonSocial || !rubro) {
+            e.preventDefault();
+            alert('Por favor complete todos los campos obligatorios');
+            return false;
+        }
+        
+        console.log('Datos del formulario:', {
+            rut_empresa: rutEmpresa,
+            razon_social: razonSocial,
+            rubro: rubro
+        });
+    });
+});
+</script>
+@endpush

@@ -15,6 +15,11 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
+// Rutas públicas para formularios externos
+Route::get('/cliente-crear', [App\Http\Controllers\ClienteController::class, 'storeFromGet'])->name('cliente.crear.get');
+Route::post('/clientes-create-external', [App\Http\Controllers\ClienteController::class, 'store'])->name('clientes.store.external');
+Route::get('/clientes-lista', [App\Http\Controllers\ClienteController::class, 'index'])->name('clientes.lista.publica');
+
 Route::middleware('auth')->group(function () {
     // Rutas para gestión de usuarios
     Route::resource('usuarios', UsuarioController::class);
@@ -22,11 +27,8 @@ Route::middleware('auth')->group(function () {
     // Rutas para gestión de productos
     Route::resource('productos', ProductController::class);
 
-    // Rutas para gestión de clientes
+    // Rutas para gestión de clientes (requieren autenticación)
     Route::resource('clientes', ClienteController::class);
-    
-    // Ruta especial para crear cliente con GET (para formularios externos)
-    Route::get('/clientes-create-get', [ClienteController::class, 'store'])->name('clientes.store.get');
 });
 
 require __DIR__ . '/auth.php';

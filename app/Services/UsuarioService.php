@@ -13,7 +13,9 @@ class UsuarioService
     public function crearUsuario(array $data): User
     {
         return User::create([
-            'name' => $data['name'],
+            'rut' => $data['rut'],
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
@@ -25,7 +27,9 @@ class UsuarioService
     public function actualizarUsuario(User $usuario, array $data): User
     {
         $updateData = [
-            'name' => $data['name'] ?? $usuario->name,
+            'rut' => $data['rut'] ?? $usuario->rut,
+            'nombre' => $data['nombre'] ?? $usuario->nombre,
+            'apellido' => $data['apellido'] ?? $usuario->apellido,
             'email' => $data['email'] ?? $usuario->email,
         ];
 
